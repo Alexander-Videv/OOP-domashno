@@ -13,7 +13,7 @@ int main()
     // mySource += 89;
     // mySource + 102;
 
-    // std::cout << mySource.hasElement();
+    // std::cout << std::boolalpha << mySource.hasNext();
 
     // mySource >> std::cout >> std::cout >> std::cout;
 
@@ -28,8 +28,9 @@ int main()
     alternate.push(mySource);
 
     mySource--;
-    mySource--;
 
+    alternate >> std::cout >> std::cout;
+    mySource--;
     alternate >> std::cout;
 
     return 0;

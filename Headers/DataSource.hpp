@@ -1,7 +1,5 @@
-// Main header, needs to be abstract and template//
-
-#include "Stack.hpp"
-#include "Iterator.hpp"
+#include <iostream>
+#include <stdexcept>
 
 #ifndef DATA_SOURCE_HPP
 #define DATA_SOURCE_HPP
@@ -9,64 +7,48 @@
 template <typename T>
 class DataSource
 {
+private:
 public:
-    virtual bool hasElement() const { return iterator != bound; };
-    virtual bool reset() = 0;
-    T getElement()
-    {
-        if (hasElement())
-        {
-            counter++;
-            return *iterator++;
-        }
-        else
-            std::cerr << "no more elements";
-        return 0;
-    };
-    void getMultiple(int number);
-
-    T operator()() { return getElement(); };
-    DataSource &operator>>(std::ostream &destination)
-    {
-        destination << getElement();
-        return *this;
-    };
-    operator bool() { return hasElement(); };
-
-public:
-    Iterator<T> begin() { return Iterator<T>(&Data[counter]); };
-
-    Iterator<T> end() { return Iterator<T>(&Data[Data.getSize()]); };
-
-    DataSource()
-    {
-        iterator = begin();
-        bound = end();
-    };
-    DataSource(T *base, int lenght)
-    {
-        Data = Stack(base, lenght);
-        iterator = begin();
-        bound = end();
-    };
+    DataSource() = default;
     virtual ~DataSource() = default;
 
-protected:
-    Stack<T> Data;
-    Iterator<T> iterator;
-    Iterator<T> bound;
-    int counter = 0;
+    virtual bool hasNext() const = 0;
+    virtual T getElement() = 0;
+    virtual void getMultiple(int number);
+    virtual bool reset() = 0;
+
+    virtual T operator()();
+    virtual DataSource &operator>>(std::ostream &output);
+    virtual operator bool();
 };
 
 template <typename T>
 inline void DataSource<T>::getMultiple(int number)
 {
     for (size_t i = 0; i < number; i++)
-    {
-        if (!hasElement())
+        if (hasNext())
+            getElement();
+        else
             break;
-        getElement();
-    }
+}
+
+template <typename T>
+inline T DataSource<T>::operator()()
+{
+    return getElement();
+}
+
+template <typename T>
+inline DataSource<T> &DataSource<T>::operator>>(std::ostream &output)
+{
+    output << getElement() << " ";
+    return *this;
+}
+
+template <typename T>
+inline DataSource<T>::operator bool()
+{
+    return hasNext();
 }
 
 #endif

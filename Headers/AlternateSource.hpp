@@ -1,25 +1,41 @@
 #include "DataSource.hpp"
+#include "Stack.hpp"
+#include "Iterator.hpp"
 
 template <typename T>
-class AlternateSource : public DataSource<DataSource<T> *>
+class AlternateSource : public DataSource<T>
 {
 private:
+    Stack<DataSource<T> *> collection;
+    Iterator<DataSource<T> *> current;
+    Iterator<DataSource<T> *> bound;
     bool reset() override { return true; }
+    void setBound();
 
 public:
-    bool hasElement();
-    T getElement();
-    void push(DataSource<T> &data) { this->Data.push(&data); };
+    bool hasNext() const override;
+    T getElement() override;
+    void push(DataSource<T> &data)
+    {
+        this->collection.push(&data);
+        setBound();
+    };
 
     AlternateSource() = default;
     ~AlternateSource() = default;
 };
 
 template <typename T>
-inline bool AlternateSource<T>::hasElement()
+inline void AlternateSource<T>::setBound()
 {
-    for (size_t i = 0; i < this->Data.getCapacity(); i++)
-        if (this->Data[i].hasElement())
+    this->bound = &collection[collection.getSize()];
+}
+
+template <typename T>
+inline bool AlternateSource<T>::hasNext() const
+{
+    for (size_t i = 0; i < collection.getCapacity(); i++)
+        if (this->collection[i]->hasNext())
             return true;
     return false;
 }
@@ -27,10 +43,10 @@ inline bool AlternateSource<T>::hasElement()
 template <typename T>
 inline T AlternateSource<T>::getElement()
 {
-    if (!hasElement)
+    if (!hasNext())
         return 0;
-    for (DataSource<T> *i = this->iterator; i < this->bound; i++)
-        if (this->Data[i].hasElement())
-            return this->Data[i].getElement();
+    for (size_t i = 0; i < collection.getSize(); i++)
+        if (this->collection[i]->hasNext())
+            return this->collection[i]->getElement();
     return 0;
 }
