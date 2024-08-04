@@ -1,5 +1,6 @@
 #include "Headers/ArraySource.hpp"
-#include "Headers\AlternateSource.hpp"
+#include "Headers/AlternateSource.hpp"
+#include "Headers/DefaultSource.hpp"
 
 int main()
 {
@@ -24,14 +25,18 @@ int main()
     // mySource >> std::cout >> std::cout;
 
     AlternateSource<int> alternate;
+    DefaultSource<int> def;
+    DefaultSource<int> def2;
+
+    alternate.push(def);
+    alternate.push(def2);
 
     alternate.push(mySource);
 
-    mySource--;
-
     alternate >> std::cout >> std::cout;
-    mySource--;
     alternate >> std::cout;
+
+    alternate >> std::cout >> std::cout >> std::cout;
 
     return 0;
 }

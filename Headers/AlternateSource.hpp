@@ -7,10 +7,15 @@ class AlternateSource : public DataSource<T>
 {
 private:
     Stack<DataSource<T> *> collection;
-    Iterator<DataSource<T> *> current;
+    Stack<bool> map;
+    Iterator<DataSource<T> *> first;
     Iterator<DataSource<T> *> bound;
+    int counter = 0;
     bool reset() override { return true; }
     void setBound();
+    void setFirst();
+    bool checkMap() const;
+    void fixMap();
 
 public:
     bool hasNext() const override;
@@ -18,10 +23,14 @@ public:
     void push(DataSource<T> &data)
     {
         this->collection.push(&data);
+
+        map.push(data.hasNext());
+
         setBound();
+        setFirst();
     };
 
-    AlternateSource() = default;
+    AlternateSource();
     ~AlternateSource() = default;
 };
 
@@ -32,12 +41,36 @@ inline void AlternateSource<T>::setBound()
 }
 
 template <typename T>
-inline bool AlternateSource<T>::hasNext() const
+inline void AlternateSource<T>::setFirst()
 {
-    for (size_t i = 0; i < collection.getCapacity(); i++)
-        if (this->collection[i]->hasNext())
+    first = &collection[0];
+}
+
+template <typename T>
+inline bool AlternateSource<T>::checkMap() const
+{
+    for (size_t i = 0; i < collection.getSize(); i++)
+        if (map[i])
             return true;
     return false;
+}
+
+template <typename T>
+inline void AlternateSource<T>::fixMap()
+{
+    for (size_t i = 0; i < collection.getSize(); i++)
+    {
+        if (collection[i]->hasNext())
+            map[i] = true;
+        else
+            map[i] = false;
+    }
+}
+
+template <typename T>
+inline bool AlternateSource<T>::hasNext() const
+{
+    return checkMap();
 }
 
 template <typename T>
@@ -45,8 +78,25 @@ inline T AlternateSource<T>::getElement()
 {
     if (!hasNext())
         return 0;
-    for (size_t i = 0; i < collection.getSize(); i++)
-        if (this->collection[i]->hasNext())
-            return this->collection[i]->getElement();
-    return 0;
+    else
+    {
+        while (map[counter] != true)
+            counter++;
+        T buffer;
+        buffer = collection[counter]->getElement();
+        fixMap();
+        if ((counter == collection.getSize() - 1) && hasNext())
+            counter = 0;
+        else
+            counter++;
+
+        return buffer;
+    }
+}
+
+template <typename T>
+inline AlternateSource<T>::AlternateSource()
+{
+    setBound();
+    setFirst();
 }
