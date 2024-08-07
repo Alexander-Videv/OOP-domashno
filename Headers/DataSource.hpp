@@ -41,7 +41,14 @@ inline T DataSource<T>::operator()()
 template <typename T>
 inline DataSource<T> &DataSource<T>::operator>>(std::ostream &output)
 {
-    output << getElement() << " ";
+    try
+    {
+        output << getElement() << " ";
+    }
+    catch (const std::exception &e)
+    {
+    }
+
     return *this;
 }
 

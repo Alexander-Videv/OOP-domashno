@@ -34,6 +34,8 @@ public:
     T &operator[](int index);
     const T &operator[](int index) const;
 
+    operator bool() const { return !isEmpty(); };
+
 private:
     T *array = nullptr;
     int capacity = CAPACITY;

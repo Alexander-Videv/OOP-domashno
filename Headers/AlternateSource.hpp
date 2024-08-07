@@ -81,7 +81,10 @@ inline T AlternateSource<T>::getElement()
     else
     {
         while (map[counter] != true)
+        {
             counter++;
+            counter %= collection.getSize();
+        }
         T buffer;
         buffer = collection[counter]->getElement();
         fixMap();

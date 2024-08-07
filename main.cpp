@@ -1,42 +1,79 @@
 #include "Headers/ArraySource.hpp"
 #include "Headers/AlternateSource.hpp"
 #include "Headers/DefaultSource.hpp"
+#include "Headers/FileSource.hpp"
+#include "Headers/GeneratorSource.hpp"
+#include "Headers/MyString.hpp"
+#include <cmath>
+
+bool isPrime(int number)
+{
+    if (number < 2)
+        return false;
+    if (number == 2 || number == 3)
+        return true;
+    for (size_t i = 2; i <= number / 2; i++)
+    {
+        if (number % i == 0)
+            return false;
+    }
+    return true;
+}
+
+int getNextPrime()
+{
+    static int current = 0;
+    while (!isPrime(++current))
+    {
+    }
+
+    return current;
+}
+
+bool max25(int a)
+{
+    static int intcount = 0;
+    intcount++;
+    return intcount < 25;
+}
+
+int getFibonnacci()
+{
+    int fib[25]{
+        0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368};
+
+    static int *ptr = &fib[0];
+    return *ptr++;
+}
 
 int main()
 {
 
-    int array[5] = {1, 2, 3, 4, 5};
+    DefaultSource<MyString> strings;
 
-    ArraySource<int> mySource(array, 5);
+    for (size_t i = 0; i < 25; i++)
+        strings >> std::cout;
 
-    // mySource >> std::cout >> std::cout >> std::cout >> std::cout >> std::cout;
+    std::ofstream binfile("binaryNumbers.bin", std::ios_base::binary);
 
-    // mySource += 89;
-    // mySource + 102;
+    GeneratorSource<int> fib(getFibonnacci);
+    fib.addRule(max25);
 
-    // std::cout << std::boolalpha << mySource.hasNext();
+    GeneratorSource<int> primes(getNextPrime);
 
-    // mySource >> std::cout >> std::cout >> std::cout;
+    GeneratorSource<int> randos(rand);
 
-    // mySource--;
+    AlternateSource<int> numbers;
+    numbers.push(primes);
+    numbers.push(randos);
+    numbers.push(fib);
 
-    // --mySource;
+    for (size_t i = 0; i < 1000; i++)
+        numbers >> binfile;
 
-    // mySource >> std::cout >> std::cout;
-
-    AlternateSource<int> alternate;
-    DefaultSource<int> def;
-    DefaultSource<int> def2;
-
-    alternate.push(def);
-    alternate.push(def2);
-
-    alternate.push(mySource);
-
-    alternate >> std::cout >> std::cout;
-    alternate >> std::cout;
-
-    alternate >> std::cout >> std::cout >> std::cout;
-
-    return 0;
+    std::fstream convert("binaryNumbers.txt");
+    convert.open("binaryNumbers.bat");
+    FileSource<int> numFIle("binaryNumbers.txt");
+    while (numFIle.hasNext())
+        numFIle >> std::cout;
 }
