@@ -7,21 +7,33 @@ class GeneratorSource : public DataSource<T>
 private:
     Generator<T> gen;
 
+    void setGen(T (*func)()) { this->gen.setGen(func); };
+
 public:
     T getElement() override;
     bool hasNext() const override;
     bool reset() override;
 
-    void addRule(bool (*func)(T)) { gen.addRule(func); };
+    template <typename... args>
+    void addRule(bool (*func)(T), args &...other)
+    {
+        gen.addRule(func);
+        addRule(other...);
+    };
 
-    GeneratorSource(T (*func)());
+    void addRule() { return; }
+
+    template <typename... args>
+    GeneratorSource(T (*func)(), args... rules);
 
     ~GeneratorSource() = default;
 };
 
 template <typename T>
-inline GeneratorSource<T>::GeneratorSource(T (*func)()) : gen(func)
+template <typename... args>
+inline GeneratorSource<T>::GeneratorSource(T (*func)(), args... rules) : gen(func)
 {
+    addRule(rules...);
 }
 
 template <typename T>

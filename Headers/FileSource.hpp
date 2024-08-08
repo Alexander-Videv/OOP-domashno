@@ -27,15 +27,16 @@ public:
     };
     bool hasNext() const override;
     T getElement() override;
+    void getAll(std::ostream &output);
 
     FileSource(const std::string &fileName);
-    ~FileSource() = default;
+    ~FileSource() { file.close(); };
 };
 
 template <typename T>
 inline bool FileSource<T>::hasNext() const
 {
-    return !(file.eof());
+    return (file.good());
 };
 
 template <typename T>
@@ -57,6 +58,12 @@ inline T FileSource<T>::getElement()
     }
 
     return T(temp);
+}
+template <typename T>
+inline void FileSource<T>::getAll(std::ostream &output)
+{
+    while (this->hasNext())
+        *this >> output;
 };
 
 template <typename T>

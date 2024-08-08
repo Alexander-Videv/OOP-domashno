@@ -22,6 +22,9 @@ public:
     T getElement() override;
     void push(DataSource<T> &data)
     {
+        if (&data == nullptr)
+            return;
+
         this->collection.push(&data);
 
         map.push(data.hasNext());
@@ -31,6 +34,7 @@ public:
     };
 
     AlternateSource();
+    AlternateSource(DataSource<T> **DataArray, int lenght);
     ~AlternateSource() = default;
 };
 
@@ -100,6 +104,18 @@ inline T AlternateSource<T>::getElement()
 template <typename T>
 inline AlternateSource<T>::AlternateSource()
 {
+    setBound();
+    setFirst();
+}
+
+template <typename T>
+inline AlternateSource<T>::AlternateSource(DataSource<T> **DataArray, int lenght)
+{
+    for (size_t i = 0; i < lenght; i++)
+    {
+        this->collection.push(DataArray[i]);
+        map.push(DataArray[i]->hasNext());
+    }
     setBound();
     setFirst();
 }

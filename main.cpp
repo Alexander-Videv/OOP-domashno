@@ -1,8 +1,4 @@
-#include "Headers/ArraySource.hpp"
-#include "Headers/AlternateSource.hpp"
-#include "Headers/DefaultSource.hpp"
-#include "Headers/FileSource.hpp"
-#include "Headers/GeneratorSource.hpp"
+#include "Headers/Factory.hpp"
 #include "Headers/MyString.hpp"
 #include <cmath>
 
@@ -48,32 +44,37 @@ int getFibonnacci()
 
 int main()
 {
-
     DefaultSource<MyString> strings;
 
-    for (size_t i = 0; i < 25; i++)
-        strings >> std::cout;
+    strings.printMultiple(25, std::cout);
 
     std::ofstream binfile("binaryNumbers.bin", std::ios_base::binary);
+    if (!binfile.good())
+        return -1;
 
-    GeneratorSource<int> fib(getFibonnacci);
-    fib.addRule(max25);
+    DataSource<int> *array[3] = {Factory<int>(TYPE::GENERATOR, getNextPrime), Factory<int>(TYPE::GENERATOR, rand), Factory<int>(TYPE::GENERATOR, getFibonnacci, max25)};
 
-    GeneratorSource<int> primes(getNextPrime);
+    AlternateSource<int> numbers(array, 3);
 
-    GeneratorSource<int> randos(rand);
+    numbers.printMultiple(1000, binfile);
 
-    AlternateSource<int> numbers;
-    numbers.push(primes);
-    numbers.push(randos);
-    numbers.push(fib);
+    binfile.close();
 
-    for (size_t i = 0; i < 1000; i++)
-        numbers >> binfile;
+    std::ifstream readBin("binaryNumbers.bin");
+    if (!readBin.good())
+        return -1;
+    std::fstream convert("binaryNumbers.txt", std::ios::out | std::ios::trunc);
+    if (!convert.good())
+        return -1;
+    int value;
 
-    std::fstream convert("binaryNumbers.txt");
-    convert.open("binaryNumbers.bat");
+    while (readBin >> value)
+        convert << value << " ";
+
+    readBin.close();
+    convert.close();
+
     FileSource<int> numFIle("binaryNumbers.txt");
-    while (numFIle.hasNext())
-        numFIle >> std::cout;
+
+    numFIle.getAll(std::cout);
 }

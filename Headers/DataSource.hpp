@@ -14,7 +14,7 @@ public:
 
     virtual bool hasNext() const = 0;
     virtual T getElement() = 0;
-    virtual void getMultiple(int number);
+    virtual void printMultiple(int number, std::ostream &output);
     virtual bool reset() = 0;
 
     virtual T operator()();
@@ -23,11 +23,11 @@ public:
 };
 
 template <typename T>
-inline void DataSource<T>::getMultiple(int number)
+inline void DataSource<T>::printMultiple(int number, std::ostream &output)
 {
     for (size_t i = 0; i < number; i++)
         if (hasNext())
-            getElement();
+            *this >> output;
         else
             break;
 }
