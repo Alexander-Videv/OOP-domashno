@@ -154,7 +154,7 @@ inline char FileSource<char>::getElement()
     char *tempPtr = nullptr;
     char temp = file.get();
     if (isspace(temp))
-        return NULL;
+        return ' ';
     tempPtr = &temp;
     try
     {

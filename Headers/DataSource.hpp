@@ -30,6 +30,7 @@ inline void DataSource<T>::printMultiple(int number, std::ostream &output)
             *this >> output;
         else
             break;
+    output << std::endl;
 }
 
 template <typename T>

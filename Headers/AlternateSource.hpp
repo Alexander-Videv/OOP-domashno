@@ -11,12 +11,10 @@ class AlternateSource : public DataSource<T>
 private:
     Stack<DataSource<T> *> collection;
     Stack<bool> map;
-    Iterator<DataSource<T> *> first;
-    Iterator<DataSource<T> *> bound;
+
     int counter = 0;
     bool reset() override;
-    void setBound();
-    void setFirst();
+
     bool checkMap() const;
     void fixMap();
 
@@ -31,9 +29,6 @@ public:
         this->collection.push(&data);
 
         map.push(data.hasNext());
-
-        setBound();
-        setFirst();
     };
 
     AlternateSource();
@@ -49,18 +44,6 @@ inline bool AlternateSource<T>::reset()
             return false;
     counter = 0;
     return true;
-}
-
-template <typename T>
-inline void AlternateSource<T>::setBound()
-{
-    this->bound = &collection[collection.getSize()];
-}
-
-template <typename T>
-inline void AlternateSource<T>::setFirst()
-{
-    first = &collection[0];
 }
 
 template <typename T>
@@ -117,8 +100,6 @@ inline T AlternateSource<T>::getElement()
 template <typename T>
 inline AlternateSource<T>::AlternateSource()
 {
-    setBound();
-    setFirst();
 }
 
 template <typename T>
@@ -129,8 +110,6 @@ inline AlternateSource<T>::AlternateSource(DataSource<T> **DataArray, int lenght
         this->collection.push(DataArray[i]);
         map.push(DataArray[i]->hasNext());
     }
-    setBound();
-    setFirst();
 }
 
 #endif
