@@ -1,9 +1,9 @@
 #include "DataSource.hpp"
-#include <fstream>
 #include <cstring>
-#include <iostream>
-#include <ctype.h>
-#include <cstdlib>
+#include <fstream>
+
+#ifndef FILE__SOURCE__HPP
+#define FILE__SOURCE__HPP
 
 template <typename T>
 class FileSource : public DataSource<T>
@@ -104,7 +104,8 @@ inline int FileSource<int>::getElement()
         temp = file.get();
         if (temp == '\0' || file.eof())
         {
-            throw std::invalid_argument("eof reached");
+            file.setstate(std::ios::failbit);
+            throw std::out_of_range("");
             break;
         }
     }
@@ -157,7 +158,7 @@ inline char FileSource<char>::getElement()
     tempPtr = &temp;
     try
     {
-        std::strtok(tempPtr, "., ");
+        std::strtok(tempPtr, " ");
     }
     catch (const std::exception &e)
     {
@@ -168,3 +169,5 @@ inline char FileSource<char>::getElement()
 
     return *std::strtok(tempPtr, " ");
 };
+
+#endif

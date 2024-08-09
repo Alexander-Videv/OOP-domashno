@@ -1,5 +1,3 @@
-#include <cstddef>
-#include <utility>
 #include <iostream>
 
 #ifndef STACK_HPP

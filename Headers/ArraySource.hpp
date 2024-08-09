@@ -2,6 +2,9 @@
 #include "Iterator.hpp"
 #include "DataSource.hpp"
 
+#ifndef ARRAY__SOURCE__HPP
+#define ARRAY__SOURCE__HPP
+
 template <typename T>
 class ArraySource : public DataSource<T>
 {
@@ -30,8 +33,7 @@ public:
         }
         else
         {
-            // throw std::out_of_range("No more elements.");
-            return -1;
+            throw std::out_of_range("Array data source is out of bounds.");
         }
     };
 
@@ -91,3 +93,5 @@ inline ArraySource<T>::ArraySource(T *base, int lenght)
     setBound();
     current = &array[0];
 }
+
+#endif

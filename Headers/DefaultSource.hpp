@@ -1,5 +1,8 @@
 #include "DataSource.hpp"
 
+#ifndef DEFAULT__SOURCE__HPP
+#define DEFAULT__SOURCE__HPP
+
 template <typename T>
 class DefaultSource : public DataSource<T>
 {
@@ -23,3 +26,5 @@ inline T DefaultSource<T>::getElement(args... input)
 {
     return T(input...);
 }
+
+#endif

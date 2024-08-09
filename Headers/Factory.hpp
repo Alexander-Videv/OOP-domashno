@@ -4,6 +4,9 @@
 #include "FileSource.hpp"
 #include "GeneratorSource.hpp"
 
+#ifndef FACTORY__HPP
+#define FACTORY__HPP
+
 enum class TYPE
 {
     GENERATOR,
@@ -30,7 +33,6 @@ CreateGenerator(args &&...arguments)
 template <typename T, typename... args>
 DataSource<T> *Factory(TYPE type, args... parameters)
 {
-    // TYPE type = parse<T>(parameters...);
     switch (type)
     {
     case TYPE::GENERATOR:
@@ -59,26 +61,4 @@ DataSource<T> *Factory(TYPE type, args... parameters)
     }
 }
 
-// template <typename T, typename... args>
-// TYPE parse(args... parameters)
-// {
-//     if (parameters...[0] == T(*)())
-//         return TYPE::GENERATOR;
-//     if (typeid(parameters..[0]) == typeid(const char *))
-//         return TYPE::FILE;
-//     if (typeid(parameters...[0]) == typeid(DataSource<T> **))
-//         return TYPE::ALTERNATE;
-//     if (typeid(parameters...[0]) == typeid(T *))
-//         return TYPE::ARRAY;
-//     try
-//     {
-//         DataSource<T>(parameters...);
-//         return TYPE::DEFAULT;
-//     }
-//     catch (const std::exception &e)
-//     {
-//         std::cerr << e.what() << '\n';
-//     }
-
-//     return TYPE::INVALID;
-// }
+#endif

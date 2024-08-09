@@ -2,6 +2,9 @@
 #include "Stack.hpp"
 #include "Iterator.hpp"
 
+#ifndef ALTERNATE__SOURCE__HPP
+#define ALTERNATE__SOURCE__HPP
+
 template <typename T>
 class AlternateSource : public DataSource<T>
 {
@@ -11,7 +14,7 @@ private:
     Iterator<DataSource<T> *> first;
     Iterator<DataSource<T> *> bound;
     int counter = 0;
-    bool reset() override { return true; }
+    bool reset() override;
     void setBound();
     void setFirst();
     bool checkMap() const;
@@ -37,6 +40,16 @@ public:
     AlternateSource(DataSource<T> **DataArray, int lenght);
     ~AlternateSource() = default;
 };
+
+template <typename T>
+inline bool AlternateSource<T>::reset()
+{
+    for (size_t i = 0; i < collection.getSize(); i++)
+        if (!(collection[i]->reset()))
+            return false;
+    counter = 0;
+    return true;
+}
 
 template <typename T>
 inline void AlternateSource<T>::setBound()
@@ -81,7 +94,7 @@ template <typename T>
 inline T AlternateSource<T>::getElement()
 {
     if (!hasNext())
-        return 0;
+        throw std::out_of_range("Alternate data source is out of bouds.");
     else
     {
         while (map[counter] != true)
@@ -119,3 +132,5 @@ inline AlternateSource<T>::AlternateSource(DataSource<T> **DataArray, int lenght
     setBound();
     setFirst();
 }
+
+#endif

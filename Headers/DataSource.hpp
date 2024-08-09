@@ -47,6 +47,7 @@ inline DataSource<T> &DataSource<T>::operator>>(std::ostream &output)
     }
     catch (const std::exception &e)
     {
+        std::cerr << e.what();
     }
 
     return *this;

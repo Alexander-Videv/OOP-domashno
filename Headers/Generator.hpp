@@ -1,5 +1,8 @@
 #include "Stack.hpp"
 
+#ifndef GENERATOR_HPP
+#define GENERATOR_HPP
+
 template <typename T>
 class Generator
 {
@@ -36,7 +39,7 @@ inline T Generator<T>::generate()
         return last;
     }
     else
-        return 0;
+        throw std::invalid_argument("Generator couldn't produce an output.");
 }
 
 template <typename T>
@@ -65,3 +68,5 @@ inline bool Generator<T>::canGenerate() const
     }
     return flag;
 }
+
+#endif

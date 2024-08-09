@@ -1,6 +1,9 @@
 #include <cstring>
 #include <iostream>
 
+#ifndef MY__STRING__HPP
+#define MY__STRING__HPP
+
 class MyString
 {
 private:
@@ -25,3 +28,5 @@ public:
     };
     ~MyString() = default;
 };
+
+#endif

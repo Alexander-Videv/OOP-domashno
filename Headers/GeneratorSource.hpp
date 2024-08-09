@@ -1,6 +1,9 @@
 #include "DataSource.hpp"
 #include "Generator.hpp"
 
+#ifndef GENERATOR__SOURCE__HPP
+#define GENERATOR__SOURCE__HPP
+
 template <typename T>
 class GeneratorSource : public DataSource<T>
 {
@@ -53,3 +56,5 @@ inline bool GeneratorSource<T>::reset()
 {
     return false;
 }
+
+#endif
