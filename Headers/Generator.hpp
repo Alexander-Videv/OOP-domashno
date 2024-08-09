@@ -6,14 +6,6 @@
 template <typename T>
 class Generator
 {
-private:
-    T(*gen)
-    ();
-
-    Stack<bool (*)(T), 10> rules;
-    T last;
-    bool flag = false;
-
 public:
     Generator(T (*gen)());
     ~Generator() = default;
@@ -27,6 +19,14 @@ public:
     void setGen(T (*gen)()) { this->gen = gen; };
     void setFlag() { flag = canGenerate(); }
     bool getFlag() const { return flag; };
+
+private:
+    Stack<bool (*)(T), 10> rules;
+    T(*gen)
+    ();
+
+    T last;
+    bool flag = false;
 };
 
 template <typename T>

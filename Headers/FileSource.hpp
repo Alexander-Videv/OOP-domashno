@@ -8,30 +8,33 @@
 template <typename T>
 class FileSource : public DataSource<T>
 {
-private:
-    std::ifstream file;
-
 public:
-    bool reset() override
-    {
-        try
-        {
-            file.seekg(std::ios::beg);
-        }
-        catch (const std::exception &e)
-        {
-            std::cerr << e.what() << '\n';
-            return false;
-        };
-        return true;
-    };
+    bool reset() override;
     bool hasNext() const override;
     T getElement() override;
     void getAll(std::ostream &output);
 
     FileSource(const std::string &fileName);
     ~FileSource() { file.close(); };
+
+private:
+    std::ifstream file;
 };
+
+template <typename T>
+inline bool FileSource<T>::reset()
+{
+    try
+    {
+        file.seekg(std::ios::beg);
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    };
+    return true;
+}
 
 template <typename T>
 inline bool FileSource<T>::hasNext() const

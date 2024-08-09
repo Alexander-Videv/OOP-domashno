@@ -7,11 +7,6 @@
 template <typename T>
 class GeneratorSource : public DataSource<T>
 {
-private:
-    Generator<T> gen;
-
-    void setGen(T (*func)()) { this->gen.setGen(func); };
-
 public:
     T getElement() override;
     bool hasNext() const override;
@@ -30,6 +25,11 @@ public:
     GeneratorSource(T (*func)(), args... rules);
 
     ~GeneratorSource() = default;
+
+private:
+    Generator<T> gen;
+
+    void setGen(T (*func)()) { this->gen.setGen(func); };
 };
 
 template <typename T>

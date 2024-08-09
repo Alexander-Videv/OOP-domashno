@@ -7,7 +7,6 @@
 template <typename T>
 class DataSource
 {
-private:
 public:
     DataSource() = default;
     virtual ~DataSource() = default;
@@ -20,6 +19,8 @@ public:
     virtual T operator()();
     virtual DataSource &operator>>(std::ostream &output);
     virtual operator bool();
+
+private:
 };
 
 template <typename T>

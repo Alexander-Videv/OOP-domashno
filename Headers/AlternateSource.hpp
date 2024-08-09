@@ -8,33 +8,37 @@
 template <typename T>
 class AlternateSource : public DataSource<T>
 {
-private:
-    Stack<DataSource<T> *> collection;
-    Stack<bool> map;
-
-    int counter = 0;
-    bool reset() override;
-
-    bool checkMap() const;
-    void fixMap();
 
 public:
     bool hasNext() const override;
     T getElement() override;
-    void push(DataSource<T> &data)
-    {
-        if (&data == nullptr)
-            return;
+    void push(DataSource<T> &data);
 
-        this->collection.push(&data);
-
-        map.push(data.hasNext());
-    };
-
-    AlternateSource();
+    AlternateSource() = default;
     AlternateSource(DataSource<T> **DataArray, int lenght);
     ~AlternateSource() = default;
+
+    AlternateSource<T>(AlternateSource<T> const &other);
+    AlternateSource<T> &operator=(AlternateSource<T> const &other);
+
+private:
+    bool reset() override;
+    bool checkMap() const;
+    void fixMap();
+
+    Stack<DataSource<T> *> collection;
+    Stack<bool> map;
+    int counter = 0;
 };
+
+template <typename T>
+inline AlternateSource<T> &AlternateSource<T>::operator=(AlternateSource<T> const &other)
+{
+    this->collection = other.collection;
+    this->map = other.map;
+    this->counter = other.counter;
+    return *this;
+}
 
 template <typename T>
 inline bool AlternateSource<T>::reset()
@@ -98,8 +102,14 @@ inline T AlternateSource<T>::getElement()
 }
 
 template <typename T>
-inline AlternateSource<T>::AlternateSource()
+inline void AlternateSource<T>::push(DataSource<T> &data)
 {
+    if (&data == nullptr)
+        return;
+
+    this->collection.push(&data);
+
+    map.push(data.hasNext());
 }
 
 template <typename T>
@@ -113,3 +123,11 @@ inline AlternateSource<T>::AlternateSource(DataSource<T> **DataArray, int lenght
 }
 
 #endif
+
+template <typename T>
+inline AlternateSource<T>::AlternateSource(AlternateSource<T> const &other)
+{
+    this->collection = other.collection;
+    this->map = other.map;
+    this->counter = other.counter;
+}

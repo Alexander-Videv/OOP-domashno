@@ -4,8 +4,6 @@
 template <typename T>
 class Iterator
 {
-private:
-    T *ptr = nullptr;
 
 public:
     T operator*() const { return *ptr; };
@@ -47,6 +45,9 @@ public:
     Iterator() = default;
     Iterator(T *object) { ptr = object; };
     ~Iterator() = default;
+
+private:
+    T *ptr = nullptr;
 };
 
 #endif

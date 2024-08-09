@@ -6,6 +6,10 @@
 
 class MyString
 {
+public:
+    MyString() { generate(); };
+    ~MyString() = default;
+
 private:
     std::string word;
 
@@ -15,18 +19,11 @@ private:
             word += (char((rand() % 26 + 1) + 96));
     }
 
-    friend std::ostream &operator<<(std::ostream &output, MyString input)
+    friend std::ostream &operator<<(std::ostream &output, const MyString &input)
     {
         output << input.word;
         return output;
     };
-
-public:
-    MyString()
-    {
-        generate();
-    };
-    ~MyString() = default;
 };
 
 #endif

@@ -8,34 +8,9 @@
 template <typename T>
 class ArraySource : public DataSource<T>
 {
-private:
-    Stack<T> array;
-    int counter = 0;
-    Iterator<T> current;
-    Iterator<T> bound;
-
-    void setBound();
-
 public:
-    bool hasNext() const override
-    {
-        if (current != bound)
-            return true;
-        else
-            return false;
-    };
-    T getElement() override
-    {
-        if (hasNext())
-        {
-            counter++;
-            return *current++;
-        }
-        else
-        {
-            throw std::out_of_range("Array data source is out of bounds.");
-        }
-    };
+    bool hasNext() const override { return (current != bound); };
+    T getElement() override;
 
     bool reset() override
     {
@@ -43,40 +18,27 @@ public:
         return true;
     };
 
-    void operator+(T element)
-    {
-        this->array.push(element);
-        setBound();
-        current = &array[counter];
-    };
-    void operator+=(T element)
-    {
-        this->array.push(element);
-        setBound();
-        current = &array[counter];
-    };
+    ArraySource<T> operator+(T element) const;
+    ArraySource<T> &operator+=(T element);
 
     // Prefix decrement
-    void operator--()
-    {
-        if (current == &array[0])
-            return;
-
-        this->current--;
-        counter--;
-    };
+    ArraySource<T> &operator--();
 
     // Postfix decrement
-    void operator--(int)
-    {
-        if (current == &array[0])
-            return;
-        --this->current;
-        counter--;
-    };
+    ArraySource<T> operator--(int);
 
     ArraySource(T *base, int lenght);
     ~ArraySource() = default;
+    ArraySource(ArraySource<T> const &other);
+    ArraySource<T> &operator=(ArraySource<T> const &other);
+
+private:
+    void setBound();
+
+    Stack<T> array;
+    Iterator<T> current;
+    Iterator<T> bound;
+    int counter = 0;
 };
 
 template <typename T>
@@ -86,12 +48,80 @@ inline void ArraySource<T>::setBound()
 }
 
 template <typename T>
+inline T ArraySource<T>::getElement()
+{
+    if (hasNext())
+    {
+        counter++;
+        return *current++;
+    }
+    else
+        throw std::out_of_range("Array data source is out of bounds.");
+}
+
+template <typename T>
+inline ArraySource<T> ArraySource<T>::operator+(T element) const
+{
+    ArraySource<T> other(*this);
+    other.array.push(element);
+    other.setBound();
+    other = &other.array[counter];
+    return other;
+}
+
+template <typename T>
+inline ArraySource<T> &ArraySource<T>::operator+=(T element)
+{
+    this->array.push(element);
+    setBound();
+    current = &array[counter];
+    return *this;
+}
+
+template <typename T>
+inline ArraySource<T> &ArraySource<T>::operator--()
+{
+    if (current == &array[0])
+        return;
+    this->current--;
+    counter--;
+    return *this;
+}
+
+template <typename T>
+inline ArraySource<T> ArraySource<T>::operator--(int)
+{
+    ArraySource<T> tmp = *this;
+    --(*this);
+    return tmp;
+}
+
+template <typename T>
 inline ArraySource<T>::ArraySource(T *base, int lenght)
 {
     for (size_t i = 0; i < lenght; i++)
         array.push(base[i]);
     setBound();
     current = &array[0];
+}
+
+template <typename T>
+inline ArraySource<T>::ArraySource(ArraySource<T> const &other)
+{
+    this->array = other.array;
+    this->counter = other.counter;
+    setBound();
+    current = &this->array[counter];
+}
+
+template <typename T>
+inline ArraySource<T> &ArraySource<T>::operator=(ArraySource<T> const &other)
+{
+    this->array = other.array;
+    this->counter = other.counter;
+    setBound();
+    current = &this->array[counter];
+    return *this;
 }
 
 #endif

@@ -6,7 +6,6 @@
 template <typename T>
 class DefaultSource : public DataSource<T>
 {
-private:
 public:
     bool hasNext() const override { return true; };
     bool reset() override { return false; }
@@ -18,6 +17,8 @@ public:
 
     DefaultSource() = default;
     ~DefaultSource() = default;
+
+private:
 };
 
 template <typename T>
