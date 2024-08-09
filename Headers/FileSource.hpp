@@ -17,6 +17,12 @@ public:
     FileSource(const std::string &fileName);
     ~FileSource() { file.close(); };
 
+    FileSource(FileSource<T> const &other) = delete;
+    FileSource<T> &operator=(FileSource<T> const &other) = delete;
+
+    FileSource(FileSource<T> &&other) = delete;
+    FileSource<T> &operator=(FileSource<T> &&other) = delete;
+
 private:
     std::ifstream file;
 };
